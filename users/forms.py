@@ -1,5 +1,3 @@
-# users/forms.py
-
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -12,27 +10,30 @@ class UserCreateForm(UserCreationForm):
     first_name = forms.CharField(
         max_length=150,
         required=True,
-        label='Имя',  # Исправлено
+        label='Имя',
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
     last_name = forms.CharField(
         max_length=150,
         required=True,
-        label='Фамилия',  # Исправлено
+        label='Фамилия',
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
     username = forms.CharField(
         max_length=150,
         required=True,
-        label='Имя пользователя',  # Исправлено
+        label='Имя пользователя',
+        help_text='Обязательное поле. Не более 150 символов. Только буквы, цифры и символы @/./+/-/_.',
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
     password1 = forms.CharField(
-        label='Пароль',  # Исправлено
+        label='Пароль',
+        help_text='Ваш пароль должен содержать как минимум 3 символа.',
         widget=forms.PasswordInput(attrs={'class': 'form-control'})
     )
     password2 = forms.CharField(
-        label='Подтверждение пароля',  # Исправлено
+        label='Подтверждение пароля',
+        help_text='Для подтверждения введите, пожалуйста, пароль ещё раз.',
         widget=forms.PasswordInput(attrs={'class': 'form-control'})
     )
 
@@ -63,19 +64,19 @@ class UserUpdateForm(forms.ModelForm):
     first_name = forms.CharField(
         max_length=150,
         required=True,
-        label='Имя',  # Исправлено
+        label='Имя',
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
     last_name = forms.CharField(
         max_length=150,
         required=True,
-        label='Фамилия',  # Исправлено
+        label='Фамилия',
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
     username = forms.CharField(
         max_length=150,
         required=True,
-        label='Имя пользователя',  # Исправлено
+        label='Имя пользователя',
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
 
@@ -92,11 +93,10 @@ class UserUpdateForm(forms.ModelForm):
 
 class UserLoginForm(AuthenticationForm):
     username = forms.CharField(
-        label='Имя пользователя',  # Исправлено
+        label='Имя пользователя',
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
-    # Исправлено: поле должно называться password, а не password1
     password = forms.CharField(
-        label='Пароль',  # Исправлено
+        label='Пароль',
         widget=forms.PasswordInput(attrs={'class': 'form-control'})
     )
