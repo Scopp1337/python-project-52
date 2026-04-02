@@ -7,10 +7,13 @@ User = get_user_model()
 
 
 class UserCRUDWithFixturesTest(TestCase):
+    """Тесты CRUD с использованием фикстур"""
 
-    fixtures = ['users.json']
+    fixtures = ['users.json']  # Загружаем фикстуру перед каждым тестом
 
     def setUp(self):
+        """Дополнительная подготовка данных"""
+        # Создаем тестовые данные для форм (пароли в открытом виде)
         self.user_data = {
             'first_name': 'New',
             'last_name': 'User',
@@ -19,30 +22,38 @@ class UserCRUDWithFixturesTest(TestCase):
             'password2': 'newpass123',
         }
 
+        # Данные для входа существующего пользователя
         self.login_data = {
             'username': 'testuser1',
-            'password': 'testpass123',
+            'password': 'testpass123',  # Пароль нужно будет установить вручную
         }
 
     def test_users_list_from_fixture(self):
+        """Тест: список пользователей из фикстуры"""
         response = self.client.get(reverse('users_index'))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.context['users']), 2)
+        self.assertEqual(len(response.context['users']), 2)  # Два пользователя из фикстуры
 
     def test_user_creation(self):
+        """Тест: создание нового пользователя"""
         response = self.client.post(reverse('user_create'), self.user_data)
         self.assertRedirects(response, reverse('login'))
         self.assertTrue(User.objects.filter(username='newuser').exists())
-        self.assertEqual(User.objects.count(), 3)
+        self.assertEqual(User.objects.count(), 3)  # 2 из фикстуры + 1 новый
 
     def test_user_update(self):
+        """Тест: редактирование пользователя"""
+        # Получаем пользователя из фикстуры
         user = User.objects.get(username='testuser1')
 
+        # Устанавливаем пароль для возможности входа
         user.password = make_password('testpass123')
         user.save()
 
+        # Логинимся
         self.client.login(username='testuser1', password='testpass123')
 
+        # Редактируем
         update_data = {
             'first_name': 'Updated',
             'last_name': 'Name',
@@ -52,33 +63,44 @@ class UserCRUDWithFixturesTest(TestCase):
 
         self.assertRedirects(response, reverse('users_index'))
 
+        # Проверяем изменения
         user.refresh_from_db()
         self.assertEqual(user.first_name, 'Updated')
         self.assertEqual(user.last_name, 'Name')
 
     def test_user_delete(self):
+        """Тест: удаление пользователя"""
+        # Получаем пользователя из фикстуры
         user = User.objects.get(username='testuser1')
 
+        # Устанавливаем пароль для возможности входа
         user.password = make_password('testpass123')
         user.save()
 
+        # Логинимся
         self.client.login(username='testuser1', password='testpass123')
 
+        # Удаляем
         response = self.client.post(reverse('user_delete', args=[user.pk]))
 
         self.assertRedirects(response, reverse('users_index'))
         self.assertFalse(User.objects.filter(username='testuser1').exists())
-        self.assertEqual(User.objects.count(), 1)
+        self.assertEqual(User.objects.count(), 1)  # Остался только testuser2
 
     def test_user_update_permission_denied(self):
+        """Тест: нельзя редактировать чужого пользователя"""
+        # Получаем пользователей из фикстуры
         user1 = User.objects.get(username='testuser1')
         user2 = User.objects.get(username='testuser2')
 
+        # Устанавливаем пароли
         user1.password = make_password('testpass123')
         user1.save()
 
+        # Логинимся как user1
         self.client.login(username='testuser1', password='testpass123')
 
+        # Пытаемся редактировать user2
         update_data = {
             'first_name': 'Hacked',
             'last_name': 'User',
@@ -88,6 +110,7 @@ class UserCRUDWithFixturesTest(TestCase):
 
         self.assertRedirects(response, reverse('users_index'))
 
+        # Проверяем, что данные не изменились
         user2.refresh_from_db()
         self.assertEqual(user2.first_name, 'Test')
         self.assertEqual(user2.last_name, 'User2')

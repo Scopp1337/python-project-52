@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container col-md-6 offset-md-3">
+    <h1 class="my-4">Удаление статуса</h1>
+    <p>Вы уверены, что хотите удалить статус "{{ status.name }}"?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Да, удалить</button>
+        <a href="{% url 'statuses_index' %}" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+{% endblock %}

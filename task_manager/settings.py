@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django_bootstrap5',
     'main',
     'users',
+    'statuses'
 
 ]
 
@@ -127,3 +128,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.User'
+
+LOGIN_URL = 'login'
+
+LOGOUT_REDIRECT_URL = 'index'

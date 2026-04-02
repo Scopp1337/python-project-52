@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 class="my-4">Статусы</h1>
+
+<a href="{% url 'status_create' %}" class="btn btn-primary mb-3">Создать статус</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Имя</th>
+            <th>Дата создания</th>
+            <th></th>
+        </thead>
+    <tbody>
+        {% for status in statuses %}
+        <tr>
+            <td>{{ status.id }}</td>
+            <td>{{ status.name }}</td>
+            <td>{{ status.created_at|date:"d.m.Y H:i" }}</td>
+            <td>
+                <a href="{% url 'status_update' status.id %}" class="btn btn-sm btn-primary">Изменить</a>
+                <a href="{% url 'status_delete' status.id %}" class="btn btn-sm btn-danger">Удалить</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4" class="text-center">Статусы не найдены</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

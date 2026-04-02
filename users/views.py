@@ -61,8 +61,9 @@ class UserDeleteView(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixi
         try:
             return super().post(request, *args, **kwargs)
         except Exception:
-            messages.error(self.request,'Невозможно удалить пользователя, так как он используется')
+            messages.error(self.request, 'Невозможно удалить пользователя, так как он используется')
             return redirect(self.success_url)
+
 
 class UserLoginView(SuccessMessageMixin, LoginView):
     form_class = UserLoginForm
@@ -70,6 +71,9 @@ class UserLoginView(SuccessMessageMixin, LoginView):
     success_message = 'Вы залогинены'
 
     def get_success_url(self):
+        next_url = self.request.GET.get('next')
+        if next_url:
+            return next_url
         return reverse_lazy('index')
 
 

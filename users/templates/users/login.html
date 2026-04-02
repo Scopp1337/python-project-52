@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% load django_bootstrap5 %}
 
 {% block content %}
 <div class="container col-md-6 offset-md-3">
@@ -7,17 +6,17 @@
     <form method="post">
         {% csrf_token %}
 
-        {% for field in form %}
-            <div class="mb-3">
-                {{ field.label_tag }}
-                {{ field }}
-                {% if field.errors %}
-                    <div class="alert alert-danger mt-1">
-                        {{ field.errors }}
-                    </div>
-                {% endif %}
-            </div>
-        {% endfor %}
+        <div class="mb-3">
+            <label for="id_username" class="form-label">Имя пользователя</label>
+            <input type="text" name="username" id="id_username" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="id_password" class="form-label">Пароль</label>
+            <input type="password" name="password" id="id_password" class="form-control" required>
+        </div>
+
+        <input type="hidden" name="next" value="{{ request.GET.next }}">
 
         <button type="submit" class="btn btn-primary">Войти</button>
     </form>
