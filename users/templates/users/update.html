@@ -1,25 +1,83 @@
 {% extends 'base.html' %}
-{% load django_bootstrap5 %}
 
 {% block content %}
-<div class="container col-md-6 offset-md-3">
-    <h1 class="my-4">Изменение пользователя</h1>
-    <form method="post">
-        {% csrf_token %}
+<div class="container">
+    <h1 class="my-4 text-dark">
+        <i class="bi bi-pencil-square"></i> Изменение пользователя
+    </h1>
 
-        {% for field in form %}
-            <div class="mb-3">
-                {{ field.label_tag }}
-                {{ field }}
-                {% if field.errors %}
-                    <div class="alert alert-danger mt-1">
-                        {{ field.errors }}
+    <div class="card shadow-sm border-secondary">
+        <div class="card-header bg-primary text-white">
+            <h2 class="card-title h4 mb-0">
+                <i class="bi bi-person-circle"></i> {{ user.get_full_name|default:user.username }}
+            </h2>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+
+                <!-- Имя -->
+                <div class="mb-4 p-3 bg-light rounded">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="bi bi-person fs-4 text-primary me-2"></i>
+                        <label for="id_first_name" class="fw-bold text-dark mb-0">Имя</label>
                     </div>
-                {% endif %}
-            </div>
-        {% endfor %}
+                    <input type="text" name="first_name" id="id_first_name" class="form-control"
+                           value="{{ form.first_name.value|default:user.first_name }}" required>
+                    {% if form.first_name.errors %}
+                        <div class="text-danger mt-2">
+                            {% for error in form.first_name.errors %}
+                                <i class="bi bi-exclamation-triangle-fill"></i> {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
 
-        <button type="submit" class="btn btn-primary">Изменить</button>
-    </form>
+                <!-- Фамилия -->
+                <div class="mb-4 p-3 bg-light rounded">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="bi bi-person fs-4 text-success me-2"></i>
+                        <label for="id_last_name" class="fw-bold text-dark mb-0">Фамилия</label>
+                    </div>
+                    <input type="text" name="last_name" id="id_last_name" class="form-control"
+                           value="{{ form.last_name.value|default:user.last_name }}" required>
+                    {% if form.last_name.errors %}
+                        <div class="text-danger mt-2">
+                            {% for error in form.last_name.errors %}
+                                <i class="bi bi-exclamation-triangle-fill"></i> {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Имя пользователя -->
+                <div class="mb-4 p-3 bg-light rounded">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="bi bi-person-badge fs-4 text-warning me-2"></i>
+                        <label for="id_username" class="fw-bold text-dark mb-0">Имя пользователя</label>
+                    </div>
+                    <input type="text" name="username" id="id_username" class="form-control"
+                           value="{{ form.username.value|default:user.username }}" required>
+                    {% if form.username.errors %}
+                        <div class="text-danger mt-2">
+                            {% for error in form.username.errors %}
+                                <i class="bi bi-exclamation-triangle-fill"></i> {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Кнопки действий -->
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary px-4 py-2">
+                        <i class="bi bi-check-lg"></i> Сохранить
+                    </button>
+                    <a href="{% url 'users_index' %}" class="btn btn-secondary px-4 py-2">
+                        <i class="bi bi-arrow-left"></i> Отмена
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 {% endblock %}

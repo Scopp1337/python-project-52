@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'django_bootstrap5',
     'main',
     'users',
-    'statuses'
+    'statuses',
+    'tasks',
 
 ]
 

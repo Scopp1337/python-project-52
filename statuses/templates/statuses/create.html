@@ -1,25 +1,49 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container col-md-6 offset-md-3">
-    <h1 class="my-4">Создать статус</h1>
-    <form method="post">
-        {% csrf_token %}
+<div class="container">
+    <h1 class="my-4 text-dark">
+        <i class="bi bi-plus-circle-fill"></i> Создать статус
+    </h1>
 
-        <div class="mb-3">
-            <label for="id_name" class="form-label">Имя</label>
-            <input type="text" name="name" id="id_name" class="form-control" value="{{ form.name.value|default:'' }}" required>
-
-            {% if form.name.errors %}
-                <div class="alert alert-danger mt-1">
-                    {% for error in form.name.errors %}
-                        {{ error }}
-                    {% endfor %}
-                </div>
-            {% endif %}
+    <div class="card shadow-sm border-secondary">
+        <div class="card-header bg-primary text-white">
+            <h2 class="card-title h4 mb-0">
+                <i class="bi bi-tag-fill"></i> Новый статус
+            </h2>
         </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
 
-        <button type="submit" class="btn btn-primary">Создать</button>
-    </form>
+                <!-- Поле Имя -->
+                <div class="mb-4 p-3 bg-light rounded">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="bi bi-pencil-square fs-4 text-primary me-2"></i>
+                        <label for="id_name" class="fw-bold text-dark mb-0">Имя</label>
+                    </div>
+                    <input type="text" name="name" id="id_name" class="form-control"
+                           value="{{ form.name.value|default:'' }}" required>
+                    {% if form.name.errors %}
+                        <div class="text-danger mt-2">
+                            {% for error in form.name.errors %}
+                                <i class="bi bi-exclamation-triangle-fill"></i> {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Кнопки действий -->
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary px-4 py-2">
+                        <i class="bi bi-check-lg"></i> Создать
+                    </button>
+                    <a href="{% url 'statuses_index' %}" class="btn btn-secondary px-4 py-2">
+                        <i class="bi bi-arrow-left"></i> Отмена
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 {% endblock %}

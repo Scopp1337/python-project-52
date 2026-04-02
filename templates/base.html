@@ -5,23 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Менеджер задач</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
         html, body { height: 100%; }
         body { display: flex; flex-direction: column; }
         .content { flex: 1 0 auto; }
         .footer { flex-shrink: 0; }
-        .hero-box {
-            border: 2px solid #dee2e6;
-            border-radius: 12px;
-            padding: 3rem 2rem;
-            background-color: #fff;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        .divider {
-            border-top: 2px solid #dee2e6;
-            margin: 1.5rem 0;
-            width: 100%;
-        }
     </style>
 </head>
 <body>
@@ -34,9 +23,12 @@
                         <a class="nav-link" href="{% url 'users_index' %}">Пользователи</a>
                     </li>
 
-                    {# Ссылка на статусы видна ВСЕМ #}
+                    <!-- Ссылки на статусы и задачи видны ВСЕМ -->
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'statuses_index' %}">Статусы</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'tasks_index' %}">Задачи</a>
                     </li>
 
                     {% if user.is_authenticated %}
@@ -64,7 +56,7 @@
             {% for message in messages %}
                 <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
                     {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             {% endfor %}
         {% endif %}
