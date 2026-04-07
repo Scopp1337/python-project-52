@@ -26,13 +26,20 @@ class TaskCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         return super().form_valid(form)
 
 
-class TaskUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+class TaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, UpdateView):
     model = Task
     form_class = TaskForm
     template_name = 'tasks/update.html'
     success_url = reverse_lazy('tasks_index')
     success_message = 'Задача успешно изменена'
 
+    def test_func(self):
+        task = self.get_object()
+        return self.request.user == task.author
+
+    def handle_no_permission(self):
+        messages.error(self.request, 'Задачу может редактировать только ее автор')
+        return redirect('tasks_index')
 
 
 class TaskDeleteView(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, DeleteView):

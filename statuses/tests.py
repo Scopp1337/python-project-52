@@ -2,6 +2,8 @@ from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from statuses.models import Status
+from tasks.models import Task
+
 
 User = get_user_model()
 
@@ -200,7 +202,25 @@ class StatusCRUDTest(TestCase):
 
     def test_status_delete_with_tasks(self):
         """Тест: нельзя удалить статус, связанный с задачей"""
-        pass
+        self.client.login(username='testuser', password='testpass123')
+
+        # Создаем задачу, связанную со статусом
+        Task.objects.create(
+            name='Тестовая задача',
+            description='Описание задачи',
+            status=self.status,
+            author=self.user
+        )
+
+        # Пытаемся удалить статус
+        response = self.client.post(
+            reverse('status_delete', args=[self.status.id])
+        )
+
+        # Статус не должен удалиться
+        self.assertTrue(Status.objects.filter(id=self.status.id).exists())
+        self.assertEqual(Status.objects.count(), 1)
+
 
     def test_status_create_page_requires_login(self):
         """Тест: страница создания статуса требует авторизации"""
