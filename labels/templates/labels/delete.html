@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container">
     <h1 class="my-4 text-dark">
-        <i class="bi bi-trash"></i> Удаление статуса
+        <i class="bi bi-trash"></i> Удаление метки
     </h1>
 
     <div class="card shadow-sm border-danger">
@@ -13,17 +13,16 @@
             </h2>
         </div>
         <div class="card-body">
-            <p class="lead">Вы уверены, что хотите удалить статус <strong>"{{ status.name }}"</strong>?</p>
+            <p class="lead">Вы уверены, что хотите удалить метку <strong>"{{ label.name }}"</strong>?</p>
 
             <form method="post">
                 {% csrf_token %}
 
-                <!-- Кнопки действий -->
                 <div class="d-flex gap-2 mt-4">
                     <button type="submit" class="btn btn-danger px-4 py-2">
                         <i class="bi bi-check-lg"></i> Да, удалить
                     </button>
-                    <a href="{% url 'statuses_index' %}" class="btn btn-secondary px-4 py-2">
+                    <a href="{% url 'labels_index' %}" class="btn btn-secondary px-4 py-2">
                         <i class="bi bi-arrow-left"></i> Отмена
                     </a>
                 </div>

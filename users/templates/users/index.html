@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
-{% load django_bootstrap5 %}
 
 {% block content %}
-<h1 class="my-4">Пользователи</h1>
+<h1 class="my-4">
+    <i class="bi bi-people-fill text-primary"></i> Пользователи
+</h1>
 
 <table class="table table-striped">
     <thead>
@@ -23,10 +24,18 @@
             <td>{{ user.date_joined|date:"d.m.Y H:i" }}</td>
             <td>
                 {% if user == request.user %}
-                    <a href="{% url 'user_update' user.pk %}" class="btn btn-sm btn-primary">Изменить</a>
-                    <a href="{% url 'user_delete' user.pk %}" class="btn btn-sm btn-danger">Удалить</a>
+                    <a href="{% url 'user_update' user.pk %}" class="btn btn-sm btn-primary">
+                        <i class="bi bi-pencil"></i> Изменить
+                    </a>
+                    <a href="{% url 'user_delete' user.pk %}" class="btn btn-sm btn-danger">
+                        <i class="bi bi-trash"></i> Удалить
+                    </a>
                 {% endif %}
             </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5" class="text-center">Пользователи не найдены</td>
         </tr>
         {% endfor %}
     </tbody>

@@ -2,11 +2,11 @@
 
 {% block content %}
 <h1 class="my-4">
-    <i class="bi bi-tags-fill text-primary"></i> Статусы
+    <i class="bi bi-bookmarks-fill text-primary"></i> Метки
 </h1>
 
-<a href="{% url 'status_create' %}" class="btn btn-primary mb-3">
-    <i class="bi bi-plus-circle"></i> Создать статус
+<a href="{% url 'label_create' %}" class="btn btn-primary mb-3">
+    <i class="bi bi-plus-circle"></i> Создать метку
 </a>
 
 <table class="table table-striped">
@@ -19,23 +19,23 @@
         </tr>
     </thead>
     <tbody>
-        {% for status in statuses %}
+        {% for label in labels %}
         <tr>
-            <td>{{ status.id }}</td>
-            <td>{{ status.name }}</td>
-            <td>{{ status.created_at|date:"d.m.Y H:i" }}</td>
+            <td>{{ label.id }}</td>
+            <td>{{ label.name }}</td>
+            <td>{{ label.created_at|date:"d.m.Y H:i" }}</td>
             <td class="text-nowrap">
-                <a href="{% url 'status_update' status.id %}" class="btn btn-sm btn-primary">
+                <a href="{% url 'label_update' label.id %}" class="btn btn-sm btn-primary">
                     <i class="bi bi-pencil"></i> Изменить
                 </a>
-                <a href="{% url 'status_delete' status.id %}" class="btn btn-sm btn-danger">
+                <a href="{% url 'label_delete' label.id %}" class="btn btn-sm btn-danger">
                     <i class="bi bi-trash"></i> Удалить
                 </a>
             </td>
         </tr>
         {% empty %}
         <tr>
-            <td colspan="4" class="text-center">Статусы не найдены</td>
+            <td colspan="4" class="text-center">Метки не найдены</td>
         </tr>
         {% endfor %}
     </tbody>

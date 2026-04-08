@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from .models import Status
 from .forms import StatusForm
+from django.db.models.deletion import ProtectedError
 
 
 class StatusesIndexView(LoginRequiredMixin, ListView):
@@ -39,6 +40,6 @@ class StatusDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     def post(self, request, *args, **kwargs):
         try:
             return super().post(request, *args, **kwargs)
-        except Exception:
+        except ProtectedError:
             messages.error(self.request, 'Невозможно удалить статус, так как он используется')
             return redirect(self.success_url)

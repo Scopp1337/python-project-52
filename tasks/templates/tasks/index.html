@@ -1,9 +1,13 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1 class="my-4">Задачи</h1>
+<h1 class="my-4">
+    <i class="bi bi-list-check text-primary"></i> Задачи
+</h1>
 
-<a href="{% url 'task_create' %}" class="btn btn-primary mb-3">Создать задачу</a>
+<a href="{% url 'task_create' %}" class="btn btn-primary mb-3">
+    <i class="bi bi-plus-circle"></i> Создать задачу
+</a>
 
 <table class="table table-striped">
     <thead>
@@ -27,10 +31,16 @@
             <td>{{ task.executor.get_full_name|default:task.executor.username|default:'—' }}</td>
             <td>{{ task.created_at|date:"d.m.Y H:i" }}</td>
             <td class="text-nowrap">
-                <a href="{% url 'task_detail' task.id %}" class="btn btn-sm btn-success">Показать</a>
-                <a href="{% url 'task_update' task.id %}" class="btn btn-sm btn-primary">Изменить</a>
-                <a href="{% url 'task_delete' task.id %}" class="btn btn-sm btn-danger">Удалить</a>
-            </td>
+                <a href="{% url 'task_detail' task.id %}" class="btn btn-sm btn-success">
+                    <i class="bi bi-eye"></i> Показать
+                </a>
+                <a href="{% url 'task_update' task.id %}" class="btn btn-sm btn-primary">
+                    <i class="bi bi-pencil"></i> Изменить
+                </a>
+                <a href="{% url 'task_delete' task.id %}" class="btn btn-sm btn-danger">
+                    <i class="bi bi-trash"></i> Удалить
+                </a>
+             </td>
         </tr>
         {% empty %}
         <tr>
