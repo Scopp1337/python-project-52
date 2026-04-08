@@ -1,5 +1,6 @@
-from django.forms import ModelForm
 from django.core.exceptions import ValidationError
+from django.forms import ModelForm
+
 from .models import Status
 
 
@@ -10,12 +11,17 @@ class StatusForm(ModelForm):
 
     def clean_name(self):
         name = self.cleaned_data.get('name')
+        if not name:
+            return name
 
-        if not self.instance.pk:
-            if Status.objects.filter(name=name).exists():
-                raise ValidationError('Статус с таким именем уже существует')
-        else:
-            if Status.objects.filter(name=name).exclude(pk=self.instance.pk).exists():
-                raise ValidationError('Статус с таким именем уже существует')
+        # Проверяем уникальность
+        exists = Status.objects.filter(name=name)
+        if self.instance.pk:
+            exists = exists.exclude(pk=self.instance.pk)
+
+        if exists.exists():
+            raise ValidationError(
+                'Статус с таким именем уже существует'
+            )
 
         return name

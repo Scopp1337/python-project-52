@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core.exceptions import ValidationError
 
 User = get_user_model()
@@ -23,7 +23,10 @@ class UserCreateForm(UserCreationForm):
         max_length=150,
         required=True,
         label='Имя пользователя',
-        help_text='Обязательное поле. Не более 150 символов. Только буквы, цифры и символы @/./+/-/_.',
+        help_text=(
+            'Обязательное поле. Не более 150 символов. '
+            'Только буквы, цифры и символы @/./+/-/_.'
+        ),
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
     password1 = forms.CharField(
@@ -39,12 +42,15 @@ class UserCreateForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'username', 'password1', 'password2']
+        fields = ['first_name', 'last_name', 'username',
+                  'password1', 'password2']
 
     def clean_username(self):
         username = self.cleaned_data.get('username')
         if User.objects.filter(username=username).exists():
-            raise ValidationError('Пользователь с таким именем уже существует')
+            raise ValidationError(
+                'Пользователь с таким именем уже существует'
+            )
         return username
 
     def clean(self):
@@ -54,9 +60,15 @@ class UserCreateForm(UserCreationForm):
 
         if password1 and password2:
             if len(password1) < 3:
-                self.add_error('password1', 'Введенный пароль слишком короткий')
+                self.add_error(
+                    'password1',
+                    'Введенный пароль слишком короткий'
+                )
             if password1 != password2:
-                self.add_error('password2', 'Введенные пароли не совпадают')
+                self.add_error(
+                    'password2',
+                    'Введенные пароли не совпадают'
+                )
         return cleaned_data
 
 
@@ -86,8 +98,12 @@ class UserUpdateForm(forms.ModelForm):
 
     def clean_username(self):
         username = self.cleaned_data.get('username')
-        if User.objects.filter(username=username).exclude(pk=self.instance.pk).exists():
-            raise ValidationError('Пользователь с таким именем уже существует')
+        if User.objects.filter(username=username).exclude(
+            pk=self.instance.pk
+        ).exists():
+            raise ValidationError(
+                'Пользователь с таким именем уже существует'
+            )
         return username
 
 

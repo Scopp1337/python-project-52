@@ -1,13 +1,19 @@
 # tasks/views.py
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView  # ← добавить DetailView
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.urls import reverse_lazy
 from django.shortcuts import redirect
-from django.contrib import messages
+from django.urls import reverse_lazy
+from django.views.generic import (  # ← добавить DetailView
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    UpdateView,
+)
 
-from .models import Task
 from .forms import TaskForm
+from .models import Task
 
 
 class TasksIndexView(LoginRequiredMixin, ListView):

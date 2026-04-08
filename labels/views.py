@@ -1,13 +1,14 @@
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.urls import reverse_lazy
 from django.shortcuts import redirect
-from django.contrib import messages
+from django.urls import reverse_lazy
+from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
-from .models import Label
-from .forms import LabelForm
 from tasks.models import Task  # Добавляем импорт
+
+from .forms import LabelForm
+from .models import Label
 
 
 class LabelsIndexView(LoginRequiredMixin, ListView):

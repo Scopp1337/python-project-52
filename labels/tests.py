@@ -1,11 +1,12 @@
-from django.test import TestCase
-from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.messages import get_messages
+from django.test import TestCase
+from django.urls import reverse
+
+from statuses.models import Status
+from tasks.models import Task
 
 from .models import Label
-from tasks.models import Task
-from statuses.models import Status
 
 User = get_user_model()
 
@@ -22,9 +23,14 @@ class LabelCRUDTest(TestCase):
     def test_label_creation(self):
         """Создание метки (только для залогиненных)"""
         self.client.login(username='testuser', password='testpass123')
-        response = self.client.post(reverse('label_create'), {'name': 'Новая метка'})
+        response = self.client.post(
+            reverse('label_create'),
+            {'name': 'Новая метка'}
+        )
         self.assertRedirects(response, reverse('labels_index'))
-        self.assertTrue(Label.objects.filter(name='Новая метка').exists())
+        self.assertTrue(
+            Label.objects.filter(name='Новая метка').exists()
+        )
 
     def test_label_update(self):
         """Редактирование метки (только для залогиненных)"""
@@ -40,9 +46,13 @@ class LabelCRUDTest(TestCase):
     def test_label_delete(self):
         """Удаление метки (только для залогиненных)"""
         self.client.login(username='testuser', password='testpass123')
-        response = self.client.post(reverse('label_delete', args=[self.label.id]))
+        response = self.client.post(
+            reverse('label_delete', args=[self.label.id])
+        )
         self.assertRedirects(response, reverse('labels_index'))
-        self.assertFalse(Label.objects.filter(id=self.label.id).exists())
+        self.assertFalse(
+            Label.objects.filter(id=self.label.id).exists()
+        )
 
     def test_labels_list_requires_login(self):
         """Список меток требует авторизации"""
@@ -53,23 +63,37 @@ class LabelCRUDTest(TestCase):
         """Нельзя удалить метку, если она связана с задачей"""
         self.client.login(username='testuser', password='testpass123')
 
+        # Создаем статус
         status = Status.objects.create(name='Новый')
 
+        # Создаем задачу
         task = Task.objects.create(
             name='Задача с меткой',
             status=status,
             author=self.user
         )
 
+        # Добавляем метку к задаче
         task.labels.add(self.label)
 
+        # Проверяем, что связь действительно создалась
         self.assertEqual(task.labels.count(), 1)
 
-        response = self.client.post(reverse('label_delete', args=[self.label.id]))
+        # Пытаемся удалить метку
+        response = self.client.post(
+            reverse('label_delete', args=[self.label.id])
+        )
 
+        # Проверяем редирект на список меток
         self.assertRedirects(response, reverse('labels_index'))
 
-        self.assertTrue(Label.objects.filter(id=self.label.id).exists())
+        # Проверяем, что метка не удалилась
+        self.assertTrue(
+            Label.objects.filter(id=self.label.id).exists()
+        )
 
+        # Проверяем сообщение об ошибке (после редиректа)
         messages = list(get_messages(response.wsgi_request))
-        self.assertTrue(any('Невозможно удалить метку' in str(msg) for msg in messages))
+        self.assertTrue(
+            any('Невозможно удалить метку' in str(msg) for msg in messages)
+        )

@@ -1,9 +1,10 @@
-from django.test import TestCase
-from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.messages import get_messages
+from django.test import TestCase
+from django.urls import reverse
 
 from statuses.models import Status
+
 from .models import Task
 
 User = get_user_model()
@@ -43,19 +44,29 @@ class TaskCRUDTest(TestCase):
         """Тест: создание задачи"""
         self.client.login(username='author', password='testpass123')
 
-        response = self.client.post(reverse('task_create'), self.task_data)
+        response = self.client.post(
+            reverse('task_create'),
+            self.task_data
+        )
 
         self.assertRedirects(response, reverse('tasks_index'))
-        self.assertTrue(Task.objects.filter(name='Новая задача').exists())
+        self.assertTrue(
+            Task.objects.filter(name='Новая задача').exists()
+        )
         task = Task.objects.get(name='Новая задача')
         self.assertEqual(task.author, self.author)
 
     def test_task_creation_requires_login(self):
         """Тест: создание задачи требует авторизации"""
-        response = self.client.post(reverse('task_create'), self.task_data)
+        response = self.client.post(
+            reverse('task_create'),
+            self.task_data
+        )
 
         self.assertEqual(response.status_code, 302)
-        self.assertFalse(Task.objects.filter(name='Новая задача').exists())
+        self.assertFalse(
+            Task.objects.filter(name='Новая задача').exists()
+        )
 
     def test_task_update_by_author(self):
         """Тест: автор может обновить свою задачу"""
@@ -89,14 +100,16 @@ class TaskCRUDTest(TestCase):
             }
         )
 
-        # Должен быть редирект с ошибкой
         self.assertRedirects(response, reverse('tasks_index'))
 
-        # Проверяем сообщение об ошибке
         messages = list(get_messages(response.wsgi_request))
-        self.assertTrue(any('может редактировать только ее автор' in str(msg) for msg in messages))
+        self.assertTrue(
+            any(
+                'может редактировать только ее автор' in str(msg)
+                for msg in messages
+            )
+        )
 
-        # Имя не должно измениться
         self.task.refresh_from_db()
         self.assertEqual(self.task.name, original_name)
 
@@ -104,28 +117,40 @@ class TaskCRUDTest(TestCase):
         """Тест: автор может удалить свою задачу"""
         self.client.login(username='author', password='testpass123')
 
-        response = self.client.post(reverse('task_delete', args=[self.task.id]))
+        response = self.client.post(
+            reverse('task_delete', args=[self.task.id])
+        )
 
         self.assertRedirects(response, reverse('tasks_index'))
-        self.assertFalse(Task.objects.filter(id=self.task.id).exists())
+        self.assertFalse(
+            Task.objects.filter(id=self.task.id).exists()
+        )
 
     def test_task_delete_by_non_author(self):
         """Тест: другой пользователь НЕ может удалить чужую задачу"""
         self.client.login(username='other', password='testpass123')
 
-        response = self.client.post(reverse('task_delete', args=[self.task.id]))
+        response = self.client.post(
+            reverse('task_delete', args=[self.task.id])
+        )
 
-        self.assertTrue(Task.objects.filter(id=self.task.id).exists())
+        self.assertTrue(
+            Task.objects.filter(id=self.task.id).exists()
+        )
 
         messages = list(get_messages(response.wsgi_request))
-        self.assertTrue(any('только ее автор' in str(msg) for msg in messages))
+        self.assertTrue(
+            any('только ее автор' in str(msg) for msg in messages)
+        )
 
     def test_cannot_delete_user_with_tasks(self):
         """Тест: нельзя удалить пользователя, если у него есть задачи"""
         with self.assertRaises(Exception):
             self.author.delete()
 
-        self.assertTrue(User.objects.filter(username='author').exists())
+        self.assertTrue(
+            User.objects.filter(username='author').exists()
+        )
 
     def test_task_list_requires_login(self):
         """Тест: список задач требует авторизации"""
