@@ -22,6 +22,6 @@ jobs:
       - name: Run tox
         run: tox -e py
       - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v7
+        uses: sonarsource/sonarqube-scan-action@e43e794c3422b3fc6340c9f43eeb95cd53d0c0e3
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
