@@ -1,25 +1,43 @@
-# tasks/views.py
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import (  # ← добавить DetailView
+from django.views.generic import (
     CreateView,
     DeleteView,
     DetailView,
-    ListView,
     UpdateView,
 )
+from django_filters.views import FilterView
 
+from .filters import TaskFilter
 from .forms import TaskForm
 from .models import Task
 
 
-class TasksIndexView(LoginRequiredMixin, ListView):
+class TasksIndexView(LoginRequiredMixin, FilterView):
     model = Task
     template_name = 'tasks/index.html'
     context_object_name = 'tasks'
+    filterset_class = TaskFilter
+    paginate_by = 10
+    filterset_context_name = 'filter'
+
+    def get_filterset_kwargs(self, *args, **kwargs):
+        kwargs = super().get_filterset_kwargs(*args, **kwargs)
+        kwargs['request'] = self.request
+        return kwargs
+
+    def get_queryset(self):
+        # Получаем queryset от фильтра
+        queryset = super().get_queryset()
+
+        # Применяем фильтр "Только свои задачи" напрямую
+        if self.request.GET.get('only_self_tasks') == 'on':
+            queryset = queryset.filter(author=self.request.user)
+
+        return queryset.order_by('-id')
 
 
 class TaskDetailView(LoginRequiredMixin, DetailView):
@@ -40,15 +58,25 @@ class TaskCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         return super().form_valid(form)
 
 
-class TaskUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+class TaskUpdateView(LoginRequiredMixin, UserPassesTestMixin,
+                     SuccessMessageMixin, UpdateView):
+
     model = Task
     form_class = TaskForm
     template_name = 'tasks/update.html'
     success_url = reverse_lazy('tasks_index')
     success_message = 'Задача успешно изменена'
 
+    def test_func(self):
+        return self.get_object().author == self.request.user
 
-class TaskDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
+    def handle_no_permission(self):
+        messages.error(self.request, 'Вы не можете редактировать эту задачу')
+        return redirect('tasks_index')
+
+
+class TaskDeleteView(LoginRequiredMixin, UserPassesTestMixin,
+                     SuccessMessageMixin, DeleteView):
     model = Task
     template_name = 'tasks/delete.html'
     success_url = reverse_lazy('tasks_index')

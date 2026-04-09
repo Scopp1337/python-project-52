@@ -155,7 +155,6 @@ class StatusCRUDTest(TestCase):
             author=self.user
         )
 
-        # Убираем присваивание переменной, так как она не используется
         self.client.post(
             reverse('status_delete', args=[self.status.id])
         )

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load django_bootstrap5 %}
 
 {% block content %}
 <h1 class="my-4">
@@ -8,6 +9,39 @@
 <a href="{% url 'task_create' %}" class="btn btn-primary mb-3">
     <i class="bi bi-plus-circle"></i> Создать задачу
 </a>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-3">
+                {{ filter.form.status.label_tag }}
+                {{ filter.form.status }}
+            </div>
+            <div class="col-md-3">
+                {{ filter.form.executor.label_tag }}
+                {{ filter.form.executor }}
+            </div>
+            <div class="col-md-3">
+                {{ filter.form.labels.label_tag }}
+                {{ filter.form.labels }}
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <div class="form-check">
+                    {{ filter.form.only_self_tasks }}
+                    {{ filter.form.only_self_tasks.label_tag }}
+                </div>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-search"></i> Показать
+                </button>
+                <a href="{% url 'tasks_index' %}" class="btn btn-secondary">
+                    <i class="bi bi-x-circle"></i> Сбросить
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
 
 <table class="table table-striped">
     <thead>
@@ -28,7 +62,13 @@
             <td>{{ task.name }}</td>
             <td>{{ task.status.name }}</td>
             <td>{{ task.author.get_full_name|default:task.author.username }}</td>
-            <td>{{ task.executor.get_full_name|default:task.executor.username|default:'—' }}</td>
+            <td>
+                {% if task.executor %}
+                    {{ task.executor.get_full_name|default:task.executor.username }}
+                {% else %}
+                    —
+                {% endif %}
+            </td>
             <td>{{ task.created_at|date:"d.m.Y H:i" }}</td>
             <td class="text-nowrap">
                 <a href="{% url 'task_detail' task.id %}" class="btn btn-sm btn-success">
@@ -40,7 +80,7 @@
                 <a href="{% url 'task_delete' task.id %}" class="btn btn-sm btn-danger">
                     <i class="bi bi-trash"></i> Удалить
                 </a>
-             </td>
+              </td>
         </tr>
         {% empty %}
         <tr>
@@ -49,4 +89,42 @@
         {% endfor %}
     </tbody>
 </table>
+
+{% if is_paginated %}
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                        <i class="bi bi-chevron-double-left"></i>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+                </li>
+            {% endif %}
+
+            <li class="page-item active">
+                <span class="page-link">
+                    {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+                </span>
+            </li>
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                        <i class="bi bi-chevron-double-right"></i>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}
 {% endblock %}

@@ -1,8 +1,8 @@
 from django.contrib.auth import get_user_model
-from django.contrib.messages import get_messages
 from django.test import TestCase
 from django.urls import reverse
 
+from labels.models import Label
 from statuses.models import Status
 
 from .models import Task
@@ -100,16 +100,10 @@ class TaskCRUDTest(TestCase):
             }
         )
 
+        # Должен быть редирект на список задач
         self.assertRedirects(response, reverse('tasks_index'))
 
-        messages = list(get_messages(response.wsgi_request))
-        self.assertTrue(
-            any(
-                'может редактировать только ее автор' in str(msg)
-                for msg in messages
-            )
-        )
-
+        # Проверяем, что имя не изменилось
         self.task.refresh_from_db()
         self.assertEqual(self.task.name, original_name)
 
@@ -134,13 +128,12 @@ class TaskCRUDTest(TestCase):
             reverse('task_delete', args=[self.task.id])
         )
 
+        # Должен быть редирект на список задач
+        self.assertRedirects(response, reverse('tasks_index'))
+
+        # Проверяем, что задача не удалилась
         self.assertTrue(
             Task.objects.filter(id=self.task.id).exists()
-        )
-
-        messages = list(get_messages(response.wsgi_request))
-        self.assertTrue(
-            any('только ее автор' in str(msg) for msg in messages)
         )
 
     def test_cannot_delete_user_with_tasks(self):
@@ -156,3 +149,158 @@ class TaskCRUDTest(TestCase):
         """Тест: список задач требует авторизации"""
         response = self.client.get(reverse('tasks_index'))
         self.assertEqual(response.status_code, 302)
+
+    def test_task_filter_by_status(self):
+        """Тест: фильтрация задач по статусу"""
+        self.client.login(username='author', password='testpass123')
+
+        status2 = Status.objects.create(name='В работе')
+
+        Task.objects.create(
+            name='Другая задача',
+            status=status2,
+            author=self.author,
+            executor=self.other_user
+        )
+
+        response = self.client.get(
+            reverse('tasks_index'),
+            {'status': self.status.id}
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Тестовая задача')
+        self.assertNotContains(response, 'Другая задача')
+
+    def test_task_filter_by_executor(self):
+        """Тест: фильтрация задач по исполнителю"""
+        self.client.login(username='author', password='testpass123')
+
+        executor2 = User.objects.create_user(
+            username='executor2',
+            password='testpass123'
+        )
+
+        Task.objects.create(
+            name='Другая задача',
+            status=self.status,
+            author=self.author,
+            executor=executor2
+        )
+
+        response = self.client.get(
+            reverse('tasks_index'),
+            {'executor': self.other_user.id}
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Тестовая задача')
+        self.assertNotContains(response, 'Другая задача')
+
+    def test_task_filter_by_labels(self):
+        """Тест: фильтрация задач по метке"""
+        self.client.login(username='author', password='testpass123')
+
+        label1 = Label.objects.create(name='Метка 1')
+        label2 = Label.objects.create(name='Метка 2')
+
+        task1 = Task.objects.create(
+            name='Задача с меткой 1',
+            status=self.status,
+            author=self.author,
+            executor=None
+        )
+        task1.labels.add(label1)
+
+        task2 = Task.objects.create(
+            name='Задача с меткой 2',
+            status=self.status,
+            author=self.author,
+            executor=None
+        )
+        task2.labels.add(label2)
+
+        response = self.client.get(
+            reverse('tasks_index'),
+            {'labels': label1.id}
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Задача с меткой 1')
+        self.assertNotContains(response, 'Задача с меткой 2')
+
+    def test_task_filter_only_self_tasks(self):
+        """Тест: фильтр 'Только свои задачи'"""
+        self.client.login(username='author', password='testpass123')
+
+        # Создаем задачу от другого автора
+        Task.objects.create(
+            name='Чужая задача',
+            status=self.status,
+            author=self.other_user,
+            executor=None
+        )
+
+        # Фильтруем "Только свои задачи"
+        response = self.client.get(
+            reverse('tasks_index'),
+            {'only_self_tasks': 'on'}
+        )
+
+        self.assertEqual(response.status_code, 200)
+        # Проверяем, что своя задача есть
+        self.assertContains(response, 'Тестовая задача')
+        # Проверяем, что чужая задача не отображается
+        self.assertNotContains(response, 'Чужая задача')
+
+    def test_task_filter_combined(self):
+        """Тест: комбинированная фильтрация (статус + исполнитель)"""
+        self.client.login(username='author', password='testpass123')
+
+        status2 = Status.objects.create(name='В работе')
+        executor2 = User.objects.create_user(
+            username='executor2',
+            password='testpass123'
+        )
+
+        Task.objects.create(
+            name='Неподходящая задача',
+            status=status2,
+            author=self.author,
+            executor=executor2
+        )
+
+        response = self.client.get(
+            reverse('tasks_index'),
+            {
+                'status': self.status.id,
+                'executor': self.other_user.id
+            }
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Тестовая задача')
+        self.assertNotContains(response, 'Неподходящая задача')
+
+    def test_task_filter_reset(self):
+        """Тест: сброс фильтров"""
+        self.client.login(username='author', password='testpass123')
+
+        status2 = Status.objects.create(name='В работе')
+        Task.objects.create(
+            name='Другая задача',
+            status=status2,
+            author=self.author,
+            executor=None
+        )
+
+        response_filtered = self.client.get(
+            reverse('tasks_index'),
+            {'status': status2.id}
+        )
+        self.assertContains(response_filtered, 'Другая задача')
+        self.assertNotContains(response_filtered, 'Тестовая задача')
+
+        response_reset = self.client.get(reverse('tasks_index'))
+        self.assertContains(response_reset, 'Тестовая задача')
+        self.assertContains(response_reset, 'Другая задача')

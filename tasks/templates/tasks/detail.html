@@ -37,7 +37,13 @@
                                 <i class="bi bi-person-check fs-4 text-success me-2"></i>
                                 <div>
                                     <div class="fw-bold text-dark mb-1">Исполнитель</div>
-                                    <div class="text-dark">{{ task.executor.get_full_name|default:task.executor.username|default:'—' }}</div>
+                                    <div class="text-dark">
+                                        {% if task.executor %}
+                                            {{ task.executor.get_full_name|default:task.executor.username }}
+                                        {% else %}
+                                            —
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -47,14 +53,14 @@
                     <div class="card bg-light h-100">
                         <div class="card-body">
                             <div class="d-flex align-items-center mb-3">
-                                <i class="bi bi-tag fs-4 text-warning me-2"></i>
+                                <i class="bi bi-tags-fill fs-4 text-primary me-2"></i>
                                 <div>
                                     <div class="fw-bold text-dark mb-1">Статус</div>
                                     <div class="text-dark">{{ task.status.name }}</div>
                                 </div>
                             </div>
                             <div class="d-flex align-items-center">
-                                <i class="bi bi-calendar fs-4 text-info me-2"></i>
+                                <i class="bi bi-calendar3 fs-4 text-primary me-2"></i>
                                 <div>
                                     <div class="fw-bold text-dark mb-1">Дата создания</div>
                                     <div class="text-dark">{{ task.created_at|date:"d.m.Y H:i" }}</div>
@@ -65,11 +71,11 @@
                 </div>
             </div>
 
-            <!-- Метки (теперь тоже в карточке) -->
+            <!-- Метки -->
             <div class="card bg-light">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
-                        <i class="bi bi-tags fs-4 text-info me-2"></i>
+                        <i class="bi bi-bookmarks-fill fs-4 text-primary me-2"></i>
                         <div>
                             <div class="fw-bold text-dark mb-1">Метки</div>
                             <div>
