@@ -22,12 +22,19 @@ class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'username']
+        labels = {
+            'first_name': 'Имя',
+            'last_name': 'Фамилия',
+            'username': 'Имя пользователя',
+        }
 
 
 class UserLoginForm(AuthenticationForm):
     username = forms.CharField(
+        label='Имя пользователя',
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
     password = forms.CharField(
+        label='Пароль',
         widget=forms.PasswordInput(attrs={'class': 'form-control'})
     )
