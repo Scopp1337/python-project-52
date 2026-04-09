@@ -17,11 +17,11 @@ class TaskCRUDTest(TestCase):
         """Подготовка данных перед каждым тестом"""
         self.author = User.objects.create_user(
             username='author',
-            password='testpass123' #NOSONAR
+            password='testpass123'  # NOSONAR
         )
         self.other_user = User.objects.create_user(
             username='other',
-            password='testpass123' #NOSONAR
+            password='testpass123'  # NOSONAR
         )
 
         self.status = Status.objects.create(name='Новый')
@@ -42,7 +42,7 @@ class TaskCRUDTest(TestCase):
 
     def test_task_creation(self):
         """Тест: создание задачи"""
-        self.client.login(username='author', password='testpass123') #NOSONAR
+        self.client.login(username='author', password='testpass123')  # NOSONAR
 
         response = self.client.post(
             reverse('task_create'),
@@ -70,7 +70,7 @@ class TaskCRUDTest(TestCase):
 
     def test_task_update_by_author(self):
         """Тест: автор может обновить свою задачу"""
-        self.client.login(username='author', password='testpass123') #NOSONAR
+        self.client.login(username='author', password='testpass123')  # NOSONAR
 
         response = self.client.post(
             reverse('task_update', args=[self.task.id]),
@@ -87,7 +87,7 @@ class TaskCRUDTest(TestCase):
 
     def test_task_update_by_non_author(self):
         """Тест: другой пользователь НЕ может обновить чужую задачу"""
-        self.client.login(username='other', password='testpass123') #NOSONAR
+        self.client.login(username='other', password='testpass123')  # NOSONAR
 
         original_name = self.task.name
 
@@ -109,7 +109,7 @@ class TaskCRUDTest(TestCase):
 
     def test_task_delete_by_author(self):
         """Тест: автор может удалить свою задачу"""
-        self.client.login(username='author', password='testpass123') #NOSONAR
+        self.client.login(username='author', password='testpass123')  # NOSONAR
 
         response = self.client.post(
             reverse('task_delete', args=[self.task.id])
@@ -122,7 +122,7 @@ class TaskCRUDTest(TestCase):
 
     def test_task_delete_by_non_author(self):
         """Тест: другой пользователь НЕ может удалить чужую задачу"""
-        self.client.login(username='other', password='testpass123') #NOSONAR
+        self.client.login(username='other', password='testpass123')  # NOSONAR
 
         response = self.client.post(
             reverse('task_delete', args=[self.task.id])
@@ -152,7 +152,7 @@ class TaskCRUDTest(TestCase):
 
     def test_task_filter_by_status(self):
         """Тест: фильтрация задач по статусу"""
-        self.client.login(username='author', password='testpass123') #NOSONAR
+        self.client.login(username='author', password='testpass123')  # NOSONAR
 
         status2 = Status.objects.create(name='В работе')
 
@@ -174,11 +174,11 @@ class TaskCRUDTest(TestCase):
 
     def test_task_filter_by_executor(self):
         """Тест: фильтрация задач по исполнителю"""
-        self.client.login(username='author', password='testpass123') #NOSONAR
+        self.client.login(username='author', password='testpass123')  # NOSONAR
 
         executor2 = User.objects.create_user(
             username='executor2',
-            password='testpass123' #NOSONAR
+            password='testpass123'  # NOSONAR
         )
 
         Task.objects.create(
@@ -199,7 +199,7 @@ class TaskCRUDTest(TestCase):
 
     def test_task_filter_by_labels(self):
         """Тест: фильтрация задач по метке"""
-        self.client.login(username='author', password='testpass123') #NOSONAR
+        self.client.login(username='author', password='testpass123')  # NOSONAR
 
         label1 = Label.objects.create(name='Метка 1')
         label2 = Label.objects.create(name='Метка 2')
@@ -231,7 +231,7 @@ class TaskCRUDTest(TestCase):
 
     def test_task_filter_only_self_tasks(self):
         """Тест: фильтр 'Только свои задачи'"""
-        self.client.login(username='author', password='testpass123') #NOSONAR
+        self.client.login(username='author', password='testpass123')  # NOSONAR
 
         # Создаем задачу от другого автора
         Task.objects.create(
@@ -255,12 +255,12 @@ class TaskCRUDTest(TestCase):
 
     def test_task_filter_combined(self):
         """Тест: комбинированная фильтрация (статус + исполнитель)"""
-        self.client.login(username='author', password='testpass123') #NOSONAR
+        self.client.login(username='author', password='testpass123')  # NOSONAR
 
         status2 = Status.objects.create(name='В работе')
         executor2 = User.objects.create_user(
             username='executor2',
-            password='testpass123' #NOSONAR
+            password='testpass123'  # NOSONAR
         )
 
         Task.objects.create(
@@ -284,7 +284,7 @@ class TaskCRUDTest(TestCase):
 
     def test_task_filter_reset(self):
         """Тест: сброс фильтров"""
-        self.client.login(username='author', password='testpass123') #NOSONAR
+        self.client.login(username='author', password='testpass123')  # NOSONAR
 
         status2 = Status.objects.create(name='В работе')
         Task.objects.create(
