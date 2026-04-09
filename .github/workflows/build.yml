@@ -15,7 +15,6 @@ jobs:
         DJANGO_SETTINGS_MODULE: task_manager.settings
         ROLLBAR_ACCESS_TOKEN: ${{ secrets.ROLLBAR_ACCESS_TOKEN }}
         ROLLBAR_ENV: development
-        DEBUG: 'False'
 
     steps:
       - name: Checkout
@@ -51,7 +50,7 @@ jobs:
       - name: Run tests with coverage
         run: make ci-test
 
-      - name: SonarQubeScan
+      - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@v6.0.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -61,3 +60,4 @@ jobs:
             -Dsonar.projectKey=Scopp1337_python-project-52
             -Dsonar.organization=scopp1337
             -Dsonar.python.coverage.reportPaths=coverage.xml
+            -Dsonar.qualitygate.wait=false
