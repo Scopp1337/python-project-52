@@ -1,23 +1,28 @@
-name: Build
+name: Python CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    types: [opened, synchronize, reopened]
+    branches: [ main ]
 
 jobs:
-  sonarqube:
-    name: SonarQube Cloud
+  test-and-sonarqube:
     runs-on: ubuntu-latest
+
+    env:
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        DJANGO_SETTINGS_MODULE: task_manager.settings
+        ROLLBAR_ACCESS_TOKEN: ${{ secrets.ROLLBAR_ACCESS_TOKEN }}
+        ROLLBAR_ENV: development
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Setup Python
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -30,14 +35,23 @@ jobs:
       - name: Install dependencies
         run: make ci-install
 
+      - name: Show versions
+        run: |
+          python --version
+          uv --version
+          uv run python -c "import django,sys; print('Django', django.get_version())"
+
+      - name: Run Ruff linter
+        run: make lint
+
       - name: Run migrations
         run: make ci-migrate
 
       - name: Run tests with coverage
         run: make ci-test
 
-      - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@e43e794c3422b3fc6340c9f43eeb95cd53d0c0e3
+      - name: SonarQubeScan
+        uses: sonarsource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io
