@@ -51,6 +51,11 @@ class UserUpdateForm(forms.ModelForm):
         required=True,
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
+    password = forms.CharField(
+        label='Пароль',
+        required=False,
+        widget=forms.PasswordInput(attrs={'class': 'form-control'})
+    )
 
     class Meta:
         model = User
