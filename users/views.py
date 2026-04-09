@@ -26,12 +26,7 @@ class UserCreateView(SuccessMessageMixin, CreateView):
     success_message = 'Пользователь успешно зарегистрирован'
 
 
-class UserUpdateView(
-    LoginRequiredMixin,
-    UserPassesTestMixin,
-    SuccessMessageMixin,
-    UpdateView
-):
+class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, UpdateView):
     model = User
     form_class = UserUpdateForm
     template_name = 'users/update.html'
@@ -43,24 +38,13 @@ class UserUpdateView(
 
     def handle_no_permission(self):
         if not self.request.user.is_authenticated:
-            messages.error(
-                self.request,
-                'Вы не авторизованы! Пожалуйста, войдите.'
-            )
+            messages.error(self.request, 'Вы не авторизованы! Пожалуйста, войдите.')
             return redirect('login')
-        messages.error(
-            self.request,
-            'У вас нет прав для изменения этого пользователя'
-        )
+        messages.error(self.request, 'У вас нет прав для изменения этого пользователя')
         return redirect('users_index')
 
 
-class UserDeleteView(
-    LoginRequiredMixin,
-    UserPassesTestMixin,
-    SuccessMessageMixin,
-    DeleteView
-):
+class UserDeleteView(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, DeleteView):
     model = User
     template_name = 'users/delete.html'
     success_url = reverse_lazy('users_index')
@@ -71,25 +55,16 @@ class UserDeleteView(
 
     def handle_no_permission(self):
         if not self.request.user.is_authenticated:
-            messages.error(
-                self.request,
-                'Вы не авторизованы! Пожалуйста, войдите.'
-            )
+            messages.error(self.request, 'Вы не авторизованы! Пожалуйста, войдите.')
             return redirect('login')
-        messages.error(
-            self.request,
-            'У вас нет прав для удаления этого пользователя'
-        )
+        messages.error(self.request, 'У вас нет прав для удаления этого пользователя')
         return redirect('users_index')
 
     def post(self, request, *args, **kwargs):
         try:
             return super().post(request, *args, **kwargs)
         except Exception:
-            messages.error(
-                self.request,
-                'Невозможно удалить пользователя, так как он используется'
-            )
+            messages.error(self.request, 'Невозможно удалить пользователя, так как он используется')
             return redirect(self.success_url)
 
 
