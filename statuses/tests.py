@@ -38,7 +38,10 @@ class StatusCRUDTest(TestCase):
 
     def test_status_list_accessible_for_logged_in(self):
         """Тест: список статусов доступен для залогиненных"""
-        self.client.login(username='testuser', password='testpass123')  # NOSONAR
+        self.client.login(
+            username='testuser',
+            password='testpass123'  # NOSONAR
+        )
         response = self.client.get(reverse('statuses_index'))
 
         self.assertEqual(response.status_code, 200)
@@ -46,7 +49,10 @@ class StatusCRUDTest(TestCase):
 
     def test_status_creation(self):
         """Тест: создание нового статуса (C - Create)"""
-        self.client.login(username='testuser', password='testpass123')  # NOSONAR
+        self.client.login(
+            username='testuser',
+            password='testpass123'  # NOSONAR
+        )
         response = self.client.post(
             reverse('status_create'),
             self.status_data
@@ -72,7 +78,10 @@ class StatusCRUDTest(TestCase):
 
     def test_status_creation_duplicate_name(self):
         """Тест: нельзя создать статус с существующим именем"""
-        self.client.login(username='testuser', password='testpass123')  # NOSONAR
+        self.client.login(
+            username='testuser',
+            password='testpass123'  # NOSONAR
+        )
         response = self.client.post(
             reverse('status_create'),
             {'name': 'Тестовый статус'}
@@ -84,7 +93,10 @@ class StatusCRUDTest(TestCase):
 
     def test_status_update(self):
         """Тест: обновление статуса (U - Update)"""
-        self.client.login(username='testuser', password='testpass123')  # NOSONAR
+        self.client.login(
+            username='testuser',
+            password='testpass123'  # NOSONAR
+        )
         update_data = {'name': 'Обновленный статус'}
         response = self.client.post(
             reverse('status_update', args=[self.status.id]),
@@ -109,7 +121,10 @@ class StatusCRUDTest(TestCase):
     def test_status_update_duplicate_name(self):
         """Тест: нельзя обновить статус на уже существующее имя"""
         Status.objects.create(name='Другой статус')
-        self.client.login(username='testuser', password='testpass123')  # NOSONAR
+        self.client.login(
+            username='testuser',
+            password='testpass123'  # NOSONAR
+        )
         response = self.client.post(
             reverse('status_update', args=[self.status.id]),
             {'name': 'Другой статус'}
@@ -122,7 +137,10 @@ class StatusCRUDTest(TestCase):
 
     def test_status_delete(self):
         """Тест: удаление статуса (D - Delete)"""
-        self.client.login(username='testuser', password='testpass123')  # NOSONAR
+        self.client.login(
+            username='testuser',
+            password='testpass123'  # NOSONAR
+        )
         response = self.client.post(
             reverse('status_delete', args=[self.status.id])
         )
@@ -146,7 +164,10 @@ class StatusCRUDTest(TestCase):
 
     def test_status_delete_with_tasks(self):
         """Тест: нельзя удалить статус, связанный с задачей"""
-        self.client.login(username='testuser', password='testpass123')  # NOSONAR
+        self.client.login(
+            username='testuser',
+            password='testpass123'  # NOSONAR
+        )
 
         Task.objects.create(
             name='Тестовая задача',
@@ -171,7 +192,10 @@ class StatusCRUDTest(TestCase):
 
     def test_status_create_page_accessible_for_logged_in(self):
         """Тест: страница создания статуса доступна для залогиненных"""
-        self.client.login(username='testuser', password='testpass123')  # NOSONAR
+        self.client.login(
+            username='testuser',
+            password='testpass123'  # NOSONAR
+        )
         response = self.client.get(reverse('status_create'))
 
         self.assertEqual(response.status_code, 200)
@@ -187,7 +211,10 @@ class StatusCRUDTest(TestCase):
 
     def test_status_update_page_accessible_for_logged_in(self):
         """Тест: страница редактирования статуса доступна для залогиненных"""
-        self.client.login(username='testuser', password='testpass123')  # NOSONAR
+        self.client.login(
+            username='testuser',
+            password='testpass123'  # NOSONAR
+        )
         response = self.client.get(
             reverse('status_update', args=[self.status.id])
         )
@@ -204,7 +231,10 @@ class StatusCRUDTest(TestCase):
 
     def test_status_delete_page_accessible_for_logged_in(self):
         """Тест: страница удаления статуса доступна для залогиненных"""
-        self.client.login(username='testuser', password='testpass123')  # NOSONAR
+        self.client.login(
+            username='testuser',
+            password='testpass123'  # NOSONAR
+        )
         response = self.client.get(
             reverse('status_delete', args=[self.status.id])
         )

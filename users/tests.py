@@ -36,7 +36,9 @@ class UserCRUDWithFixturesTest(TestCase):
         """Тест: создание нового пользователя"""
         response = self.client.post(reverse('user_create'), self.user_data)
         self.assertRedirects(response, reverse('login'))
-        self.assertTrue(User.objects.filter(username='newuser').exists())
+        self.assertTrue(
+            User.objects.filter(username='newuser').exists()
+        )
         self.assertEqual(User.objects.count(), 3)
 
     def test_user_update(self):
@@ -46,7 +48,10 @@ class UserCRUDWithFixturesTest(TestCase):
         user.password = make_password('testpass123')  # NOSONAR
         user.save()
 
-        self.client.login(username='testuser1', password='testpass123')  # NOSONAR
+        self.client.login(
+            username='testuser1',
+            password='testpass123'  # NOSONAR
+        )
 
         update_data = {
             'first_name': 'Updated',
@@ -71,7 +76,10 @@ class UserCRUDWithFixturesTest(TestCase):
         user.password = make_password('testpass123')  # NOSONAR
         user.save()
 
-        self.client.login(username='testuser1', password='testpass123')  # NOSONAR
+        self.client.login(
+            username='testuser1',
+            password='testpass123'  # NOSONAR
+        )
 
         response = self.client.post(
             reverse('user_delete', args=[user.pk])
@@ -91,7 +99,10 @@ class UserCRUDWithFixturesTest(TestCase):
         user1.password = make_password('testpass123')  # NOSONAR
         user1.save()
 
-        self.client.login(username='testuser1', password='testpass123')  # NOSONAR
+        self.client.login(
+            username='testuser1',
+            password='testpass123'  # NOSONAR
+        )
 
         update_data = {
             'first_name': 'Hacked',

@@ -22,7 +22,10 @@ class LabelCRUDTest(TestCase):
 
     def test_label_creation(self):
         """Создание метки (только для залогиненных)"""
-        self.client.login(username='testuser', password='testpass123')  # NOSONAR
+        self.client.login(
+            username='testuser',
+            password='testpass123'  # NOSONAR
+        )
         response = self.client.post(
             reverse('label_create'),
             {'name': 'Новая метка'}
@@ -34,7 +37,10 @@ class LabelCRUDTest(TestCase):
 
     def test_label_update(self):
         """Редактирование метки (только для залогиненных)"""
-        self.client.login(username='testuser', password='testpass123')  # NOSONAR
+        self.client.login(
+            username='testuser',
+            password='testpass123'  # NOSONAR
+        )
         response = self.client.post(
             reverse('label_update', args=[self.label.id]),
             {'name': 'Обновленная метка'}
@@ -45,7 +51,10 @@ class LabelCRUDTest(TestCase):
 
     def test_label_delete(self):
         """Удаление метки (только для залогиненных)"""
-        self.client.login(username='testuser', password='testpass123')  # NOSONAR
+        self.client.login(
+            username='testuser',
+            password='testpass123'  # NOSONAR
+        )
         response = self.client.post(
             reverse('label_delete', args=[self.label.id])
         )
@@ -61,7 +70,10 @@ class LabelCRUDTest(TestCase):
 
     def test_cannot_delete_label_used_in_task(self):
         """Нельзя удалить метку, если она связана с задачей"""
-        self.client.login(username='testuser', password='testpass123')  # NOSONAR
+        self.client.login(
+            username='testuser',
+            password='testpass123'  # NOSONAR
+        )
 
         # Создаем статус
         status = Status.objects.create(name='Новый')
@@ -95,5 +107,8 @@ class LabelCRUDTest(TestCase):
         # Проверяем сообщение об ошибке (после редиректа)
         messages = list(get_messages(response.wsgi_request))
         self.assertTrue(
-            any('Невозможно удалить метку' in str(msg) for msg in messages)
+            any(
+                'Невозможно удалить метку' in str(msg)
+                for msg in messages
+            )
         )
