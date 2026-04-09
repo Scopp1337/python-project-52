@@ -17,13 +17,13 @@ class UserCRUDWithFixturesTest(TestCase):
             'first_name': 'New',
             'last_name': 'User',
             'username': 'newuser',
-            'password1': 'newpass123',
-            'password2': 'newpass123',
+            'password1': 'newpass123', #NOSONAR
+            'password2': 'newpass123', #NOSONAR
         }
 
         self.login_data = {
             'username': 'testuser1',
-            'password': 'testpass123',
+            'password': 'testpass123', #NOSONAR
         }
 
     def test_users_list_from_fixture(self):
@@ -43,10 +43,10 @@ class UserCRUDWithFixturesTest(TestCase):
         """Тест: редактирование пользователя"""
         user = User.objects.get(username='testuser1')
 
-        user.password = make_password('testpass123')
+        user.password = make_password('testpass123') #NOSONAR
         user.save()
 
-        self.client.login(username='testuser1', password='testpass123')
+        self.client.login(username='testuser1', password='testpass123') #NOSONAR
 
         update_data = {
             'first_name': 'Updated',
@@ -68,10 +68,10 @@ class UserCRUDWithFixturesTest(TestCase):
         """Тест: удаление пользователя"""
         user = User.objects.get(username='testuser1')
 
-        user.password = make_password('testpass123')
+        user.password = make_password('testpass123') #NOSONAR
         user.save()
 
-        self.client.login(username='testuser1', password='testpass123')
+        self.client.login(username='testuser1', password='testpass123') #NOSONAR
 
         response = self.client.post(
             reverse('user_delete', args=[user.pk])
@@ -88,10 +88,10 @@ class UserCRUDWithFixturesTest(TestCase):
         user1 = User.objects.get(username='testuser1')
         user2 = User.objects.get(username='testuser2')
 
-        user1.password = make_password('testpass123')
+        user1.password = make_password('testpass123') #NOSONAR
         user1.save()
 
-        self.client.login(username='testuser1', password='testpass123')
+        self.client.login(username='testuser1', password='testpass123') #NOSONAR
 
         update_data = {
             'first_name': 'Hacked',
