@@ -51,7 +51,7 @@ jobs:
         run: make ci-test
 
       - name: SonarQubeScan
-        uses: sonarsource/sonarqube-scan-action@b5a97b61bb12420f015beb2dbe047b82fcdb50a9
+        uses: sonarsource/sonarqube-scan-action@v6.1.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io
